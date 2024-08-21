@@ -11,6 +11,8 @@ class Date
 	int getDaysInMonth() const;
 	void setFactoryVersion();
 	String getMonthName() const;
+	static bool isValidDate(int d, int m, int y);
+	static bool isLeapYear(int y);
 public:
 	Date();
 	Date(int, int, int);
