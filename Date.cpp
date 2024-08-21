@@ -1,41 +1,19 @@
 #include"Date.h"
 const int Date::daysInMonth[13] = { 0,31,28,31,30,31,30,31,31,30,31,30,31 };
-bool Date::isLeapYear() const
-{
-	if (!(year % 4))
-	{
-		if (!(year % 100))
-		{
-			if (!(year % 400))
-			{
-				return true;
-			}
-			return false;
-		}
-		return true;
-	}
-	return false;
-}
-void Date::setFactoryVersion()
-{
-	day = 1;
-	month = 1;
-	year = 2001;
-}
-String Date::getMonthName() const
-{
-	String months[12][10] = { "January","Febrary","March","April","May","June","July","August", "September","October","November","December" };
-	return months[month - 1][0];
-}
 Date::Date()
 {
 	setFactoryVersion();
 }
 Date::Date(int d, int m, int y) : Date()
 {
+	if (!isValidDate(d, m, y))
+	{
+		return;
+	}
 	setMonth(m);
 	setYear(y);
 	setDay(d);
+
 }
 Date::Date(const Date& ref)
 {
@@ -43,9 +21,56 @@ Date::Date(const Date& ref)
 	month = ref.month;
 	year = ref.year;
 }
+bool Date::isLeapYear() const
+{
+	return isLeapYear(year);
+}
+void Date::setFactoryVersion()
+{
+	day = 1;
+	month = 1;
+	year = 1500;
+}
+String Date::getMonthName() const
+{
+	String months[12][10] = { "January","Febrary","March","April","May","June","July","August", "September","October","November","December" };
+	return months[month - 1][0];
+}
+bool Date::isValidDate(int d, int m, int y)
+{
+	if (m > 12 || m <= 0 || y < 1500)
+	{
+		return false;
+	}
+	if (m !=2 && d<=daysInMonth[m])
+	{
+		return true;
+	}
+	if (m == 2 && isLeapYear(y))
+	{
+		return (d <= 29) ? true : false;
+	}
+	return false;
+}
+ bool Date::isLeapYear(int year)
+{
+	 if (!(year % 4))
+	 {
+		 if (!(year % 100))
+		 {
+			 if (!(year % 400))
+			 {
+				 return true;
+			 }
+			 return false;
+		 }
+		 return true;
+	 }
+	 return false;
+}
 void Date::setDate(int d, int m, int y)
 {
-	if ((y > 0) && (m >= 1 && m <= 12) && (d >= 1 && d <= daysInMonth[m]))
+	if (isValidDate(d,m,y))
 	{
 		day = d;
 		month = m;
@@ -74,21 +99,17 @@ int Date::getDaysInMonth() const
 {
 	if (month == 2)
 	{
-		if (isLeapYear())
-		{
-			return 29;
-		}
-		return 28;
+		return (isLeapYear()) ? 29 : 28;
 	}
 	return daysInMonth[month];
 }
 void Date::setDay(int d)
 {
-	if (d > 0 && getDaysInMonth())
+	if (d > getDaysInMonth() || d <= 0)
 	{
-		day = d;
+		return;
 	}
-	//No suitable logic i could find.
+	day = d;
 }
 void Date::setMonth(int m)
 {
@@ -233,7 +254,6 @@ String Date::getDateInFormat2() const
 	yearString = year;
 	date.insert(date.getLength(), yearString);
 	date.reSize(date.getLength() + 1);
-	date[date.getLength()] = '\0';
 	return date;
 }
 String Date::getDateInFormat3() const
