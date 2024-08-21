@@ -46,9 +46,13 @@ bool Date::isValidDate(int d, int m, int y)
 	{
 		return true;
 	}
-	if (m == 2 && isLeapYear(y))
+	if (m == 2 )
 	{
-		return (d <= 29) ? true : false;
+		if (isLeapYear(y))
+		{
+			return (d <= 29) ? true : false;
+		}
+		return (d <= 28) ? true : false;
 	}
 	return false;
 }
